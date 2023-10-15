@@ -51,6 +51,12 @@
       <version>2.15.2</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>jakarta.json</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>second_Homework</finalName>
