@@ -41,19 +41,21 @@ public class WeatherService {
 
     public Weather getWeatherFromCity(String city, int countOfDays) throws IllegalArgumentException, ClassCastException {
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         if (countOfDays < 1 || countOfDays > 16) {
             throw new IllegalArgumentException();
         }
 
         GeoData geoData = new GeoData(city);
 
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         HttpClient client = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
                 .build();
 
-        String geoDataRequsetBuilderUri = yandexGeocoderApiUrl +
+        String geoDataRequsetBuilderUri =
+                yandexGeocoderApiUrl +
                 "?" +
                 yandexGeocoderApiKey +
                 "&" +
@@ -67,7 +69,7 @@ public class WeatherService {
                 .GET()
                 .build();
 
-        HttpResponse<String> geoDataResponse = null;
+        HttpResponse<String> geoDataResponse;
         try {
             geoDataResponse = client.send(geoDataRequest, HttpResponse.BodyHandlers.ofString());
             JsonNode geoDataCityNode = mapper.readTree(geoDataResponse.body())
@@ -93,11 +95,13 @@ public class WeatherService {
             geoData.setLongitude(Double.parseDouble(coordinateDecoding.group()));
             coordinateDecoding.find();
             geoData.setLatitude(Double.parseDouble(coordinateDecoding.group()));
+
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        String forecastRequestBuilderUri = openMeteoApiUrl +
+        String forecastRequestBuilderUri =
+                openMeteoApiUrl +
                 "?" +
                 openMeteoApiSettings +
                 "&" +
@@ -138,10 +142,10 @@ public class WeatherService {
         int index = 0;
         do {
             Weather weather = new Weather(weatherToDivide.getGeoData(),
-                    new Forecast(new ArrayList<String>(),
-                            new ArrayList<Double>(),
-                            new ArrayList<Integer>(),
-                            new ArrayList<Integer>()));
+                    new Forecast(new ArrayList<>(),
+                            new ArrayList<>(),
+                            new ArrayList<>(),
+                            new ArrayList<>()));
             for (int i = index; i <= index + 23; i++) {
                 weather.getForecast().getHumidity().add(weatherToDivide.getForecast().getHumidity().get(i));
                 weather.getForecast().getTime().add(weatherToDivide.getForecast().getTime().get(i));
@@ -152,12 +156,5 @@ public class WeatherService {
             resultWeatherArrayList.add(weather);
         } while (index < weatherToDivide.getForecast().getTime().size());
         return resultWeatherArrayList;
-    }
-
-    public static void main(String[] args) throws IOException {
-        WeatherService service = new WeatherService();
-        Weather weather = service.getWeatherFromCity("Ааааааааа", 5);
-        List<Weather> weatherList = service.divideWeatherByDays(weather);
-        System.out.println(weatherList);
     }
 }
