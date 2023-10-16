@@ -11,6 +11,15 @@
         </jsp-property-group>
     </jsp-config>
 
+    <servlet>
+        <servlet-name>index</servlet-name>
+        <jsp-file>/view/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>index</servlet-name>
+        <url-pattern>/view/index.jsp</url-pattern>
+    </servlet-mapping>
+
 </web-app>
 
 

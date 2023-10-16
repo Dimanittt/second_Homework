@@ -1,4 +1,4 @@
-<%@ page import="dto.Weather" %>
+<%@ page import="models.Weather" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -8,7 +8,7 @@
 </head>
 <body>
 <br>
-<button onclick="location.href='/'">На главную</button>
+<button onclick="location.href='..'">На главную</button>
 <br>
 <% List<Weather> weatherByDayList = (List<Weather>) request.getAttribute("weatherByDayList");
     if (!weatherByDayList.get(0).getGeoData().getUserDefinedCity().equals(weatherByDayList.get(0).getGeoData().getCity())) {
@@ -49,5 +49,9 @@
     </tbody>
 </table>
 <% } %>
+
+
+
+
 </body>
 </html>

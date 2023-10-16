@@ -1,19 +1,37 @@
-package dto;
+package models;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.util.List;
 
+/**
+ * DTO отвечающий за прогноз погоды за определенный промежуток дней (1-16 исходя из возможностей <a href="https://open-meteo.com/">API</a>)
+ */
 public class Forecast {
 
+    private int id;
+
+    /**
+     * Время в формате ISO 8601 с точностью до часа
+     */
     @JsonSetter("time")
     private List<String> time;
 
+    /**
+     * Температура в цельсиях по часам
+     */
     @JsonSetter("temperature_2m")
     private List<Double> temperature;
 
+    /**
+     * Относительная влажность в % по часам
+     */
     @JsonSetter("relativehumidity_2m")
     private List<Integer> humidity;
 
+    /**
+     * Вероятность осадков в % по часам
+     */
     @JsonSetter("precipitation_probability")
     private List<Integer> precipitationProbability;
 
@@ -41,6 +59,14 @@ public class Forecast {
 
     public void setTemperature(List<Double> temperature) {
         this.temperature = temperature;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public List<Integer> getHumidity() {

@@ -1,15 +1,35 @@
-package dto;
+package models;
 
+/**
+ * DTO отвечающий за описание населенного пункта из <a href="https://yandex.ru/dev/maps/geocoder/">API</a>
+ */
 public class GeoData {
 
+    private int id;
+
+    /**
+     * Широта
+     */
     private double latitude;
 
+    /**
+     * Долгота
+     */
     private double longitude;
 
+    /**
+     * Населенный пункт, определенный геокодером
+     */
     private String city;
 
+    /**
+     * Столица населенного пункта
+     */
     private String country;
 
+    /**
+     * Населенный пункт, введенный пользователем
+     */
     private String userDefinedCity;
 
     public GeoData() {
@@ -45,6 +65,14 @@ public class GeoData {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setLongitude(double longitude) {

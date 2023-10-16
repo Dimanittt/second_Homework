@@ -1,17 +1,20 @@
 package servlets;
 
-import dto.Weather;
+import models.Weather;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.WeatherService;
+import services.WeatherService;
 
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Сервлет, отвечающий за логику валидации вводимых данных и формирования прогноза
+ */
 @WebServlet("/forecast")
 public class Forecast extends HttpServlet {
 
@@ -35,12 +38,12 @@ public class Forecast extends HttpServlet {
                 cityValidation = false;
                 request.setAttribute("cityValidation", cityValidation);
             }
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
             dispatcher.forward(request, response);
         }
         List<Weather> weatherByDayList = weatherService.divideWeatherByDays(weather);
         request.setAttribute("weatherByDayList", weatherByDayList);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/forecast.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("forecast.jsp");
         dispatcher.forward(request, response);
     }
 }
