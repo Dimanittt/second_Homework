@@ -1,0 +1,60 @@
+package models;
+
+import java.util.List;
+
+public class User {
+
+    private int id;
+
+    private String username;
+
+    private String password;
+
+    private List<Weather> weather_requests;
+
+    public User() {
+    }
+
+    public User(String username, String password, List<Weather> weather_requests) {
+        this.username = username;
+        this.password = password;
+        this.weather_requests = weather_requests;
+    }
+
+    public void addWeather(Weather weather) {
+        weather_requests.add(weather);
+        weather.addUser(this);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Weather> getWeather_requests() {
+        return weather_requests;
+    }
+
+    public void setWeather_requests(List<Weather> weather_requests) {
+        this.weather_requests = weather_requests;
+    }
+}
