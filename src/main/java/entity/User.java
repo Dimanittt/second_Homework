@@ -1,10 +1,12 @@
-package models;
+package entity;
 
 import java.util.List;
 
 public class User {
 
     private int id;
+
+    private String hometown;
 
     private String username;
 
@@ -15,7 +17,9 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, List<Weather> weather_requests) {
+    public User(int id, String hometown, String username, String password, List<Weather> weather_requests) {
+        this.id = id;
+        this.hometown = hometown;
         this.username = username;
         this.password = password;
         this.weather_requests = weather_requests;

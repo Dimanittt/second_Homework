@@ -1,4 +1,4 @@
-package models;
+package entity;
 
 /**
  * DTO отвечающий за описание населенного пункта из <a href="https://yandex.ru/dev/maps/geocoder/">API</a>

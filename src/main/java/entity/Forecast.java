@@ -1,7 +1,9 @@
-package models;
+package entity;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ public class Forecast {
      * Время в формате ISO 8601 с точностью до часа
      */
     @JsonSetter("time")
-    private List<String> time;
+    private List<Timestamp> time;
 
     /**
      * Температура в цельсиях по часам
@@ -36,20 +38,24 @@ public class Forecast {
     private List<Integer> precipitationProbability;
 
     public Forecast() {
+        this.time = new ArrayList<>();
+        this.temperature = new ArrayList<>();
+        this.humidity = new ArrayList<>();
+        this.precipitationProbability = new ArrayList<>();
     }
 
-    public Forecast(List<String> time, List<Double> temperature, List<Integer> humidity, List<Integer> precipitationProbability) {
+    public Forecast(List<Timestamp> time, List<Double> temperature, List<Integer> humidity, List<Integer> precipitationProbability) {
         this.time = time;
         this.temperature = temperature;
         this.humidity = humidity;
         this.precipitationProbability = precipitationProbability;
     }
 
-    public List<String> getTime() {
+    public List<Timestamp> getTime() {
         return time;
     }
 
-    public void setTime(List<String> time) {
+    public void setTime(List<Timestamp> time) {
         this.time = time;
     }
 
@@ -88,11 +94,12 @@ public class Forecast {
     @Override
     public String toString() {
         return "Forecast{" +
-                "time=" + time +
-                ", temperature=" + temperature +
-                ", humidity=" + humidity +
-                ", precipitationProbability=" + precipitationProbability +
-                '}';
+               "id=" + id +
+               ", time=" + time +
+               ", temperature=" + temperature +
+               ", humidity=" + humidity +
+               ", precipitationProbability=" + precipitationProbability +
+               '}';
     }
 }
 

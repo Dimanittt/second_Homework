@@ -1,6 +1,6 @@
 package servlets;
 
-import models.Weather;
+import entity.Weather;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,7 +18,7 @@ import java.util.List;
 @WebServlet("/forecast")
 public class Forecast extends HttpServlet {
 
-    WeatherService weatherService = new WeatherService();
+    WeatherService weatherService = WeatherService.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

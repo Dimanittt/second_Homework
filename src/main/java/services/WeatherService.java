@@ -4,9 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import models.Forecast;
-import models.GeoData;
-import models.Weather;
+import dao.ForecastDao;
+import entity.Forecast;
+import entity.GeoData;
+import entity.Weather;
 
 import java.io.IOException;
 import java.net.URI;
@@ -66,8 +67,15 @@ public class WeatherService {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public WeatherService() {
+    private static final WeatherService INSTANCE = new WeatherService();
+
+    private WeatherService() {
     }
+
+    public static WeatherService getInstance() {
+        return INSTANCE;
+    }
+
 
     /**
      *
@@ -81,7 +89,7 @@ public class WeatherService {
 
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        if (countOfDays < 1 || countOfDays > 16) {
+        if (countOfDays <= 0 || countOfDays >= 10) {
             throw new IllegalArgumentException();
         }
 

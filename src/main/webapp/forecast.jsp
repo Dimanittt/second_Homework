@@ -1,6 +1,7 @@
-<%@ page import="models.Weather" %>
+<%@ page import="entity.Weather" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Iterator" %>
+<%@ page import="java.sql.Timestamp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="ru_RU">
 <head>
@@ -18,7 +19,7 @@
 <h2>Погода в
     городе <% out.print(weatherByDayList.get(0).getGeoData().getCity() + ", " + weatherByDayList.get(0).getGeoData().getCountry()); %></h2>
 <% for (Weather weather : weatherByDayList) { %>
-<h3>На <% out.print(weather.getForecast().getTime().get(0).substring(0, 10)); %></h3>
+<h3>На <% out.print(weather.getForecast().getTime().get(0)); %></h3>
 <table style="width:800px">
     <thead>
     <tr>
@@ -30,13 +31,13 @@
     </thead>
     <tbody>
     <%
-        Iterator<String> time = weather.getForecast().getTime().iterator();
+        Iterator<Timestamp> time = weather.getForecast().getTime().iterator();
         Iterator<Double> temperature = weather.getForecast().getTemperature().iterator();
         Iterator<Integer> humidity = weather.getForecast().getHumidity().iterator();
         Iterator<Integer> precipitationProbability = weather.getForecast().getPrecipitationProbability().iterator();
         while (time.hasNext() && temperature.hasNext() && humidity.hasNext() && precipitationProbability.hasNext()) { %>
     <tr>
-        <td><%= time.next().substring(11, 13) %>
+        <td><%= time.next() %>
         </td>
         <td><%= temperature.next() %>
         </td>
