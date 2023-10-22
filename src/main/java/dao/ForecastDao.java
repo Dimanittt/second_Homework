@@ -18,7 +18,7 @@ public class ForecastDao {
     private ForecastDao() {
     }
 
-    public static ForecastDao getInstance() {
+    static ForecastDao getInstance() {
         return INSTANCE;
     }
 
@@ -28,17 +28,8 @@ public class ForecastDao {
             """;
 
     private static final String SAVE = """
-            INSERT INTO forecast (id, hour, temperature, humidity, precipitation_probability)
-            VALUES (?, ?, ?, ?, ?)
-            """;
-
-    private static final String UPDATE = """
-            UPDATE forecast
-            SET hour = ?,
-            temperature = ?,
-            humidity = ?,
-            precipitation_probability = ?
-            WHERE id = ?
+            INSERT INTO forecast (id, hour, date, temperature, humidity, precipitation_probability)
+            VALUES (?, ?, ?, ?, ?, ?)
             """;
 
     private static final String SELECT_BY_ID = """
@@ -51,62 +42,25 @@ public class ForecastDao {
             WHERE id = ?
             """;
 
-    private static final String SELECT_ALL_ID = """
-            SELECT DISTINCT id
-            FROM forecast
-            """;
-
-    public Forecast selectById(int id) {
+    public List<Forecast> selectById(int id) {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
+            List<Forecast> forecastList = new ArrayList<>();
             Forecast forecast = new Forecast();
-            forecast.setId(id);
             while (resultSet.next()) {
                 forecast.setId(resultSet.getInt("id"));
-                forecast.getTime().add(resultSet.getTimestamp("hour"));
-                forecast.getTemperature().add(resultSet.getDouble("temperature"));
-                forecast.getHumidity().add(resultSet.getInt("humidity"));
-                forecast.getPrecipitationProbability().add(resultSet.getInt("precipitation_probability"));
-            }
-            return forecast;
-        } catch (
-                SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public List<Forecast> selectAll() {
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatementAllId = connection.prepareStatement(SELECT_ALL_ID)) {
-            ResultSet resultSetId = preparedStatementAllId.executeQuery();
-            List<Forecast> forecastList = new ArrayList<>();
-            while (resultSetId.next()) {
-                forecastList.add(selectById(resultSetId.getInt("id")));
+                forecast.setTime(resultSet.getTime("hour"));
+                forecast.setTemperature(resultSet.getDouble("temperature"));
+                forecast.setHumidity(resultSet.getInt("humidity"));
+                forecast.setPrecipitationProbability(resultSet.getInt("precipitation_probability"));
+                forecastList.add(forecast);
             }
             return forecastList;
         } catch (
                 SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public void update(Forecast forecast) {
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)) {
-            for (int i = 0; i < 24; i++) {
-                preparedStatement.setTimestamp(1, forecast.getTime().get(i));
-                preparedStatement.setDouble(2, forecast.getTemperature().get(i));
-                preparedStatement.setInt(3, forecast.getHumidity().get(i));
-                preparedStatement.setInt(4, forecast.getPrecipitationProbability().get(i));
-                preparedStatement.setInt(5, forecast.getId());
-                preparedStatement.executeUpdate();
-            }
-        } catch (
-                SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -120,20 +74,20 @@ public class ForecastDao {
         }
     }
 
-    public void save(Forecast forecast) {
+    public void save(List<Forecast> forecastList) {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SAVE)) {
-            for (int i = 0; i < 24; i++) {
+            for (Forecast forecast : forecastList) {
                 preparedStatement.setInt(1, forecast.getId());
-                preparedStatement.setTimestamp(2, forecast.getTime().get(i));
-                preparedStatement.setDouble(3, forecast.getTemperature().get(i));
-                preparedStatement.setInt(4, forecast.getHumidity().get(i));
-                preparedStatement.setInt(5, forecast.getPrecipitationProbability().get(i));
+                preparedStatement.setTime(2, forecast.getTime());
+                preparedStatement.setDate(3, forecast.getDate());
+                preparedStatement.setDouble(4, forecast.getTemperature());
+                preparedStatement.setInt(5, forecast.getHumidity());
+                preparedStatement.setInt(6, forecast.getPrecipitationProbability());
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
     }
-
 }

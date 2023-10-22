@@ -1,5 +1,6 @@
 package entity;
 
+import java.sql.Date;
 import java.util.List;
 
 public class Weather {
@@ -8,9 +9,11 @@ public class Weather {
 
     private GeoData geoData;
 
-    private Forecast forecast;
+    private Date date;
 
-    private List<User> user_requests;
+    private List<Forecast> forecast;
+
+    private int user_id;
 
     /**
      * DTO отвечающий за комбинацию {@link Forecast} и {@link GeoData}
@@ -18,14 +21,23 @@ public class Weather {
     public Weather() {
     }
 
-    public Weather(GeoData geoData, Forecast forecast) {
+    public Weather(GeoData geoData, List<Forecast> forecast) {
         this.geoData = geoData;
         this.forecast = forecast;
     }
 
-    public void addUser(User user) {
-        user_requests.add(user);
-        user.addWeather(this);
+    public Weather(GeoData geoData, Date date, List<Forecast> forecast) {
+        this.geoData = geoData;
+        this.date = date;
+        this.forecast = forecast;
+    }
+
+    public Weather(int id, GeoData geoData, Date date, List<Forecast> forecast, int user_id) {
+        this.id = id;
+        this.geoData = geoData;
+        this.date = date;
+        this.forecast = forecast;
+        this.user_id = user_id;
     }
 
     public int getId() {
@@ -44,27 +56,38 @@ public class Weather {
         this.geoData = geoData;
     }
 
-    public Forecast getForecast() {
+    public List<Forecast> getForecast() {
         return forecast;
     }
 
-    public List<User> getUser_requests() {
-        return user_requests;
+    public Date getDate() {
+        return date;
     }
 
-    public void setUser_requests(List<User> user_requests) {
-        this.user_requests = user_requests;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public void setForecast(Forecast forecast) {
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
+
+    public void setForecast(List<Forecast> forecast) {
         this.forecast = forecast;
     }
 
     @Override
     public String toString() {
         return "Weather{" +
-                "geoData=" + geoData +
-                ", forecast=" + forecast +
-                '}';
+               "id=" + id +
+               ", geoData=" + geoData +
+               ", date=" + date +
+               ", forecast=" + forecast +
+               ", user_id=" + user_id +
+               '}';
     }
 }

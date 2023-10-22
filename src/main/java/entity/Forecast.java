@@ -1,10 +1,10 @@
 package entity;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalTime;
 
 /**
  * DTO отвечающий за прогноз погоды за определенный промежуток дней (1-16 исходя из возможностей <a href="https://open-meteo.com/">API</a>)
@@ -16,55 +16,35 @@ public class Forecast {
     /**
      * Время в формате ISO 8601 с точностью до часа
      */
-    @JsonSetter("time")
-    private List<Timestamp> time;
+    private Time time;
+
+    private Date date;
 
     /**
      * Температура в цельсиях по часам
      */
-    @JsonSetter("temperature_2m")
-    private List<Double> temperature;
+    private Double temperature;
 
     /**
      * Относительная влажность в % по часам
      */
-    @JsonSetter("relativehumidity_2m")
-    private List<Integer> humidity;
+    private Integer humidity;
 
     /**
      * Вероятность осадков в % по часам
      */
-    @JsonSetter("precipitation_probability")
-    private List<Integer> precipitationProbability;
+    private Integer precipitationProbability;
 
     public Forecast() {
-        this.time = new ArrayList<>();
-        this.temperature = new ArrayList<>();
-        this.humidity = new ArrayList<>();
-        this.precipitationProbability = new ArrayList<>();
     }
 
-    public Forecast(List<Timestamp> time, List<Double> temperature, List<Integer> humidity, List<Integer> precipitationProbability) {
+    public Forecast(int id, Time time, Date date, Double temperature, Integer humidity, Integer precipitationProbability) {
+        this.id = id;
         this.time = time;
+        this.date = date;
         this.temperature = temperature;
         this.humidity = humidity;
         this.precipitationProbability = precipitationProbability;
-    }
-
-    public List<Timestamp> getTime() {
-        return time;
-    }
-
-    public void setTime(List<Timestamp> time) {
-        this.time = time;
-    }
-
-    public List<Double> getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(List<Double> temperature) {
-        this.temperature = temperature;
     }
 
     public int getId() {
@@ -75,19 +55,43 @@ public class Forecast {
         this.id = id;
     }
 
-    public List<Integer> getHumidity() {
+    public Time getTime() {
+        return time;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(Double temperature) {
+        this.temperature = temperature;
+    }
+
+    public Integer getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(List<Integer> humidity) {
+    public void setHumidity(Integer humidity) {
         this.humidity = humidity;
     }
 
-    public List<Integer> getPrecipitationProbability() {
+    public Integer getPrecipitationProbability() {
         return precipitationProbability;
     }
 
-    public void setPrecipitationProbability(List<Integer> precipitationProbability) {
+    public void setPrecipitationProbability(Integer precipitationProbability) {
         this.precipitationProbability = precipitationProbability;
     }
 

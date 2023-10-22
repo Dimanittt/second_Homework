@@ -44,7 +44,7 @@
     <input type="submit" name="city" value="Москва"/>
     <input type="submit" name="city" value="Санкт-Петербург"/>
     <input type="submit" name="city" value="Казань"/>
-    <input type="submit" name="city" value="Владовосток"/>
+    <input type="submit" name="city" value="Владивосток"/>
 </form>
 
 </body>

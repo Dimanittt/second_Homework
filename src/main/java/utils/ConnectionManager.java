@@ -1,7 +1,6 @@
 package utils;
 
 
-import JDBC_lessons.utils.PropertiesUtil;
 
 import java.lang.reflect.Proxy;
 import java.sql.Connection;

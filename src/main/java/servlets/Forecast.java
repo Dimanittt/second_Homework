@@ -1,5 +1,6 @@
 package servlets;
 
+import dao.WeatherDao;
 import entity.Weather;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import services.WeatherService;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -18,11 +20,13 @@ import java.util.List;
 @WebServlet("/forecast")
 public class Forecast extends HttpServlet {
 
+    WeatherDao weatherDao = WeatherDao.getInstance();
+
     WeatherService weatherService = WeatherService.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Weather weather = null;
+        List<Weather> weather = null;
         boolean cityValidation;
         boolean daysValidation;
         try {
@@ -41,8 +45,14 @@ public class Forecast extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
             dispatcher.forward(request, response);
         }
-        List<Weather> weatherByDayList = weatherService.divideWeatherByDays(weather);
-        request.setAttribute("weatherByDayList", weatherByDayList);
+        weather.stream().forEach(x -> {
+            try {
+                weatherDao.save(x);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        request.setAttribute("weather", weather);
         RequestDispatcher dispatcher = request.getRequestDispatcher("forecast.jsp");
         dispatcher.forward(request, response);
     }

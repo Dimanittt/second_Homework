@@ -27,7 +27,6 @@ public class User {
 
     public void addWeather(Weather weather) {
         weather_requests.add(weather);
-        weather.addUser(this);
     }
 
     public int getId() {
@@ -60,5 +59,24 @@ public class User {
 
     public void setWeather_requests(List<Weather> weather_requests) {
         this.weather_requests = weather_requests;
+    }
+
+    public String getHometown() {
+        return hometown;
+    }
+
+    public void setHometown(String hometown) {
+        this.hometown = hometown;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+               "id=" + id +
+               ", hometown='" + hometown + '\'' +
+               ", username='" + username + '\'' +
+               ", password='" + password + '\'' +
+               ", weather_requests=" + weather_requests +
+               '}';
     }
 }
