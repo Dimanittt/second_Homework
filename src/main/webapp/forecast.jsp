@@ -1,12 +1,20 @@
 <%@ page import="entity.Weather" %>
 <%@ page import="java.util.List" %>
 <%@ page import="entity.Forecast" %>
+<%@ page import="entity.User" %>
+<%@ page import="java.util.Comparator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="ru_RU">
 <head>
     <title>Погода в городе</title>
 </head>
 <body>
+<%
+    User user = (User) request.getSession().getAttribute("user");
+    if (user == null){
+        response.sendRedirect("/login");
+    }
+%>
 <br>
 <button onclick="location.href='..'">На главную</button>
 <br>
@@ -17,7 +25,8 @@
 %>
 <h2>Погода в
     городе <% out.print(weatherByDayList.get(0).getGeoData().getCity() + ", " + weatherByDayList.get(0).getGeoData().getCountry()); %></h2>
-<% for (Weather weather : weatherByDayList) { %>
+<% for (Weather weather : weatherByDayList) {
+    weather.getForecast().sort(Comparator.comparing(Forecast::getTime));%>
 <h3>На <% out.print(weather.getDate()); %></h3>
 <table style="width:800px">
     <thead>

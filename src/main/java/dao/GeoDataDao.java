@@ -7,6 +7,7 @@ import utils.ConnectionManager;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class GeoDataDao {
 
@@ -32,6 +33,17 @@ public class GeoDataDao {
             FROM geodata
             WHERE city = ? AND country = ?
             """;
+
+    private static final String SELECT_GEODATA_BY_WEATHER_ID = """
+            SELECT g.id,
+                   g.city,
+                   g.country,
+                   g.latitude,
+                   g.longitude
+            FROM geodata g
+                     INNER JOIN weather w ON g.id = w.geodata_id
+                AND w.id = ?
+                                    """;
 
     /**
      * Метод сначала проверяет наличие строки с параметрами city и country в таблице geodata,
@@ -65,6 +77,27 @@ public class GeoDataDao {
             }
         } catch (SQLException e) {
             throw new DaoException(e);
+        }
+    }
+
+    public Optional<GeoData> getGeoDataByWeatherId(int weatherId) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_GEODATA_BY_WEATHER_ID)) {
+                preparedStatement.setInt(1, weatherId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            GeoData geoData = null;
+            if (resultSet.next()) {
+                geoData = new GeoData();
+                geoData.setId(resultSet.getInt("id"));
+                geoData.setLatitude(resultSet.getDouble("latitude"));
+                geoData.setLongitude(resultSet.getDouble("longitude"));
+                geoData.setCountry(resultSet.getString("country"));
+                geoData.setCity(resultSet.getString("city"));
+                return Optional.of(geoData);
+            }
+            return Optional.ofNullable(geoData);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

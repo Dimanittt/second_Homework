@@ -1,6 +1,7 @@
 package servlets;
 
 import dao.WeatherDao;
+import entity.User;
 import entity.Weather;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -18,7 +19,7 @@ import java.util.List;
  * Сервлет, отвечающий за логику валидации вводимых данных и формирования прогноза
  */
 @WebServlet("/forecast")
-public class Forecast extends HttpServlet {
+public class ForecastServlet extends HttpServlet {
 
     WeatherDao weatherDao = WeatherDao.getInstance();
 
@@ -26,6 +27,7 @@ public class Forecast extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
         List<Weather> weather = null;
         boolean cityValidation;
         boolean daysValidation;
@@ -47,7 +49,7 @@ public class Forecast extends HttpServlet {
         }
         weather.stream().forEach(x -> {
             try {
-                weatherDao.save(x);
+                weatherDao.save(x, user.getId());
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

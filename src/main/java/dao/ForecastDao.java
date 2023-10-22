@@ -33,11 +33,12 @@ public class ForecastDao {
             """;
 
     private static final String SELECT_BY_ID = """
-            SELECT id,
-            hour,
-            temperature,
-            humidity,
-            precipitation_probability
+            SELECT
+                id,
+                hour,
+                temperature,
+                humidity,
+                precipitation_probability
             FROM forecast
             WHERE id = ?
             """;

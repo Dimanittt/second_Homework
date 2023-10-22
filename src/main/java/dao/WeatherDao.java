@@ -1,10 +1,13 @@
 package dao;
 
 import entity.Forecast;
+import entity.GeoData;
 import entity.Weather;
 import utils.ConnectionManager;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WeatherDao {
 
@@ -20,20 +23,20 @@ public class WeatherDao {
         return INSTANCE;
     }
 
-        private static final String CHECK_BEFORE_SAVE = """
-                SELECT g.city,
-                       g.country,
-                       w.date
-                FROM weather w
-                         INNER JOIN geodata g ON g.id = w.geodata_id
-                    AND g.city = ?
-                    AND g.country = ?
-                    AND w.date = ?
-                            """;
+    private static final String CHECK_BEFORE_SAVE = """
+            SELECT g.city,
+                   g.country,
+                   w.date
+            FROM weather w
+                     INNER JOIN geodata g ON g.id = w.geodata_id
+                AND g.city = ?
+                AND g.country = ?
+                AND w.date = ?
+                        """;
 
     private static final String SAVE_TO_GET_ID = """
-            INSERT INTO weather (date)
-            VALUES (?)
+            INSERT INTO weather (date, user_id)
+            VALUES (?, ?)
             """;
 
     private static final String UPDATE_PARAMETERS = """
@@ -43,7 +46,19 @@ public class WeatherDao {
             WHERE id = ?                 
             """;
 
-    public void save(Weather weather) throws SQLException {
+    private static final String SELECT_USER_WEATHER_LIST = """
+            SELECT
+                id,
+                date,
+                geodata_id,
+                forecast_id,
+                user_id
+            FROM weather
+            WHERE user_id = ?
+            """;
+
+
+    public void save(Weather weather, int userId) throws SQLException {
 
         Connection connection = null;
         PreparedStatement savePreparedStatement = null;
@@ -65,7 +80,7 @@ public class WeatherDao {
             ResultSet checkResultSet = checkPreparedStatement.executeQuery();
             boolean check = true;
 
-            if (checkResultSet.next()){
+            if (checkResultSet.next()) {
                 if (checkResultSet.getString("city").equals(weather.getGeoData().getCity()) &&
                     checkResultSet.getString("country").equals(weather.getGeoData().getCountry()) &&
                     checkResultSet.getDate("date").equals(weather.getDate())) {
@@ -76,6 +91,7 @@ public class WeatherDao {
             if (check) {
 
                 getIdPreparedStatement.setDate(1, weather.getDate());
+                getIdPreparedStatement.setInt(2, userId);
                 getIdPreparedStatement.executeUpdate();
 
                 ResultSet generatedKeys = getIdPreparedStatement.getGeneratedKeys();
@@ -117,6 +133,27 @@ public class WeatherDao {
                 checkPreparedStatement.close();
             }
             connection.setAutoCommit(true);
+        }
+    }
+
+    public List<Weather> getAllUserWeatherRequests(int userId) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_WEATHER_LIST)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Weather> weatherList = new ArrayList<>();
+            while (resultSet.next()) {
+                Weather weather = new Weather();
+                weather.setId(resultSet.getInt("id"));
+                weather.setUser_id(resultSet.getInt("user_id"));
+                weather.setDate(resultSet.getDate("date"));
+                weather.setGeoData(geoDataDao.getGeoDataByWeatherId(weather.getId()).get());
+                weather.setForecast(forecastDao.selectById(weather.getId()));
+                weatherList.add(weather);
+            }
+            return weatherList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

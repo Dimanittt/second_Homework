@@ -235,7 +235,7 @@ public class WeatherService {
      */
     public List<Weather> getWeatherFromCity(String userDefinedCity, int amountOfDays) throws IllegalArgumentException, NullPointerException {
 
-        if (amountOfDays <= 0 || amountOfDays >= 10) {
+        if (amountOfDays <= 0 || amountOfDays > 10) {
             throw new IllegalArgumentException();
         }
 

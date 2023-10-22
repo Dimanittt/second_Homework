@@ -12,21 +12,32 @@ public class User {
 
     private String password;
 
-    private List<Weather> weather_requests;
+    private int userRole;
+
+    private List<Weather> weatherRequests;
 
     public User() {
     }
 
-    public User(int id, String hometown, String username, String password, List<Weather> weather_requests) {
+    public User(int id, String hometown, String username, String password, int userRole, List<Weather> weatherRequests) {
         this.id = id;
         this.hometown = hometown;
         this.username = username;
         this.password = password;
-        this.weather_requests = weather_requests;
+        this.userRole = userRole;
+        this.weatherRequests = weatherRequests;
+    }
+
+    public int getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(int userRole) {
+        this.userRole = userRole;
     }
 
     public void addWeather(Weather weather) {
-        weather_requests.add(weather);
+        weatherRequests.add(weather);
     }
 
     public int getId() {
@@ -53,12 +64,12 @@ public class User {
         this.password = password;
     }
 
-    public List<Weather> getWeather_requests() {
-        return weather_requests;
+    public List<Weather> getWeatherRequests() {
+        return weatherRequests;
     }
 
-    public void setWeather_requests(List<Weather> weather_requests) {
-        this.weather_requests = weather_requests;
+    public void setWeatherRequests(List<Weather> weatherRequests) {
+        this.weatherRequests = weatherRequests;
     }
 
     public String getHometown() {
@@ -76,7 +87,8 @@ public class User {
                ", hometown='" + hometown + '\'' +
                ", username='" + username + '\'' +
                ", password='" + password + '\'' +
-               ", weather_requests=" + weather_requests +
+               ", userRole=" + userRole +
+               ", weatherRequests=" + weatherRequests +
                '}';
     }
 }
