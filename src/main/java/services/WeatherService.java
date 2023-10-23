@@ -184,6 +184,7 @@ public class WeatherService {
                 .build();
 
         HttpResponse<String> forecastResponse = null;
+        
         try {
             forecastResponse = client.send(forecastRequest, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {

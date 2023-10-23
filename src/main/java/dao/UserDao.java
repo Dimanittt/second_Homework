@@ -51,6 +51,7 @@ public class UserDao {
             SELECT 
             """;
 
+
     public Optional<User> getByUsernameAndPassword(String username, String password) {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_USERNAME_AND_PASSWORD)) {

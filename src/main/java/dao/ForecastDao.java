@@ -24,23 +24,23 @@ public class ForecastDao {
 
     private static final String DELETE = """
                 DELETE FROM forecast
-                WHERE id = ?;
+                WHERE weather_id = ?;
             """;
 
     private static final String SAVE = """
-            INSERT INTO forecast (id, hour, date, temperature, humidity, precipitation_probability)
+            INSERT INTO forecast (weather_id, hour, date, temperature, humidity, precipitation_probability)
             VALUES (?, ?, ?, ?, ?, ?)
             """;
 
     private static final String SELECT_BY_ID = """
             SELECT
-                id,
+                weather_id,
                 hour,
                 temperature,
                 humidity,
                 precipitation_probability
             FROM forecast
-            WHERE id = ?
+            WHERE weather_id = ?
             """;
 
     public List<Forecast> selectById(int id) {
@@ -51,7 +51,7 @@ public class ForecastDao {
             List<Forecast> forecastList = new ArrayList<>();
             Forecast forecast = new Forecast();
             while (resultSet.next()) {
-                forecast.setId(resultSet.getInt("id"));
+                forecast.setWeatherId(resultSet.getInt("weather_id"));
                 forecast.setTime(resultSet.getTime("hour"));
                 forecast.setTemperature(resultSet.getDouble("temperature"));
                 forecast.setHumidity(resultSet.getInt("humidity"));
@@ -65,21 +65,20 @@ public class ForecastDao {
         }
     }
 
-    public boolean delete(int id) {
+    public boolean delete(int weatherId) {
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE)) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, weatherId);
             return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
-    public void save(List<Forecast> forecastList) {
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SAVE)) {
+    public void save(List<Forecast> forecastList, Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE)) {
             for (Forecast forecast : forecastList) {
-                preparedStatement.setInt(1, forecast.getId());
+                preparedStatement.setInt(1, forecast.getWeatherId());
                 preparedStatement.setTime(2, forecast.getTime());
                 preparedStatement.setDate(3, forecast.getDate());
                 preparedStatement.setDouble(4, forecast.getTemperature());

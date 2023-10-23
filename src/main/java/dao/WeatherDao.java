@@ -1,7 +1,6 @@
 package dao;
 
 import entity.Forecast;
-import entity.GeoData;
 import entity.Weather;
 import utils.ConnectionManager;
 
@@ -25,14 +24,17 @@ public class WeatherDao {
 
     private static final String CHECK_BEFORE_SAVE = """
             SELECT g.city,
-                   g.country,
-                   w.date
+                g.country,
+                w.date,
+                u.id
             FROM weather w
-                     INNER JOIN geodata g ON g.id = w.geodata_id
-                AND g.city = ?
-                AND g.country = ?
-                AND w.date = ?
-                        """;
+                INNER JOIN geodata g ON g.id = w.geodata_id
+                INNER JOIN users u on u.id = w.user_id
+            AND u.id = ?
+            AND g.city = ?
+            AND g.country = ?
+            AND w.date = ?
+                                                        """;
 
     private static final String SAVE_TO_GET_ID = """
             INSERT INTO weather (date, user_id)
@@ -41,7 +43,7 @@ public class WeatherDao {
 
     private static final String UPDATE_PARAMETERS = """
             UPDATE  weather
-            SET forecast_id = ?,
+            SET 
                 geodata_id = ?
             WHERE id = ?                 
             """;
@@ -51,19 +53,19 @@ public class WeatherDao {
                 id,
                 date,
                 geodata_id,
-                forecast_id,
                 user_id
             FROM weather
             WHERE user_id = ?
             """;
 
 
-    public void save(Weather weather, int userId) throws SQLException {
+    public void save(Weather weather) throws SQLException {
 
         Connection connection = null;
         PreparedStatement savePreparedStatement = null;
         PreparedStatement getIdPreparedStatement = null;
         PreparedStatement checkPreparedStatement = null;
+
         try {
 
             connection = ConnectionManager.getConnection();
@@ -73,16 +75,19 @@ public class WeatherDao {
 
             connection.setAutoCommit(false);
 
-            checkPreparedStatement.setString(1, weather.getGeoData().getCity());
-            checkPreparedStatement.setString(2, weather.getGeoData().getCountry());
-            checkPreparedStatement.setDate(3, weather.getDate());
+            checkPreparedStatement.setInt(1, weather.getUserId());
+            checkPreparedStatement.setString(2, weather.getGeoData().getCity());
+            checkPreparedStatement.setString(3, weather.getGeoData().getCountry());
+            checkPreparedStatement.setDate(4, weather.getDate());
 
             ResultSet checkResultSet = checkPreparedStatement.executeQuery();
+
             boolean check = true;
 
             if (checkResultSet.next()) {
                 if (checkResultSet.getString("city").equals(weather.getGeoData().getCity()) &&
                     checkResultSet.getString("country").equals(weather.getGeoData().getCountry()) &&
+                    checkResultSet.getInt("id") == weather.getUserId() &&
                     checkResultSet.getDate("date").equals(weather.getDate())) {
                     check = false;
                 }
@@ -91,7 +96,7 @@ public class WeatherDao {
             if (check) {
 
                 getIdPreparedStatement.setDate(1, weather.getDate());
-                getIdPreparedStatement.setInt(2, userId);
+                getIdPreparedStatement.setInt(2, weather.getUserId());
                 getIdPreparedStatement.executeUpdate();
 
                 ResultSet generatedKeys = getIdPreparedStatement.getGeneratedKeys();
@@ -101,18 +106,19 @@ public class WeatherDao {
                 }
 
                 for (Forecast forecast : weather.getForecast()) {
-                    forecast.setId(weatherId);
+                    forecast.setWeatherId(weatherId);
                 }
 
-                int geoDataId = geoDataDao.save(weather.getGeoData());
+                int geoDataId = geoDataDao.save(weather.getGeoData(), connection);
 
-                forecastDao.save(weather.getForecast());
-
-                savePreparedStatement.setInt(1, weatherId);
-                savePreparedStatement.setInt(2, geoDataId);
-                savePreparedStatement.setInt(3, weatherId);
+                savePreparedStatement.setInt(1, geoDataId);
+                savePreparedStatement.setInt(2, weatherId);
                 savePreparedStatement.executeUpdate();
+
+                forecastDao.save(weather.getForecast(), connection);
+
                 connection.commit();
+
             }
         } catch (Exception e) {
             if (connection != null) {
@@ -145,7 +151,7 @@ public class WeatherDao {
             while (resultSet.next()) {
                 Weather weather = new Weather();
                 weather.setId(resultSet.getInt("id"));
-                weather.setUser_id(resultSet.getInt("user_id"));
+                weather.setUserId(resultSet.getInt("user_id"));
                 weather.setDate(resultSet.getDate("date"));
                 weather.setGeoData(geoDataDao.getGeoDataByWeatherId(weather.getId()).get());
                 weather.setForecast(forecastDao.selectById(weather.getId()));

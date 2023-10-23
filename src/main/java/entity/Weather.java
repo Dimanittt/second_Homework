@@ -13,7 +13,7 @@ public class Weather {
 
     private List<Forecast> forecast;
 
-    private int user_id;
+    private int userId;
 
     /**
      * DTO отвечающий за комбинацию {@link Forecast} и {@link GeoData}
@@ -32,12 +32,12 @@ public class Weather {
         this.forecast = forecast;
     }
 
-    public Weather(int id, GeoData geoData, Date date, List<Forecast> forecast, int user_id) {
+    public Weather(int id, GeoData geoData, Date date, List<Forecast> forecast, int userId) {
         this.id = id;
         this.geoData = geoData;
         this.date = date;
         this.forecast = forecast;
-        this.user_id = user_id;
+        this.userId = userId;
     }
 
     public int getId() {
@@ -68,12 +68,12 @@ public class Weather {
         this.date = date;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void setForecast(List<Forecast> forecast) {
@@ -87,7 +87,7 @@ public class Weather {
                ", geoData=" + geoData +
                ", date=" + date +
                ", forecast=" + forecast +
-               ", user_id=" + user_id +
+               ", user_id=" + userId +
                '}';
     }
 }

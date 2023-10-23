@@ -52,8 +52,8 @@ public class GeoDataDao {
      * @param geoData
      * @return Id строки в таблице geodata
      */
-    public int save(GeoData geoData) {
-        try (Connection connection = ConnectionManager.getConnection();
+    public int save(GeoData geoData, Connection connection) {
+        try (
              PreparedStatement savePreparedStatement = connection.prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS);
              PreparedStatement checkPreparedStatement = connection.prepareStatement(CHECK_BEFORE_SAVE)) {
 

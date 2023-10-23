@@ -1,5 +1,6 @@
 package servlets;
 
+import dao.UserDao;
 import dao.WeatherDao;
 import entity.User;
 import entity.Weather;
@@ -20,6 +21,8 @@ import java.util.List;
  */
 @WebServlet("/forecast")
 public class ForecastServlet extends HttpServlet {
+
+    UserDao userDao = UserDao.getInstance();
 
     WeatherDao weatherDao = WeatherDao.getInstance();
 
@@ -49,11 +52,14 @@ public class ForecastServlet extends HttpServlet {
         }
         weather.stream().forEach(x -> {
             try {
-                weatherDao.save(x, user.getId());
+                x.setUserId(user.getId());
+                weatherDao.save(x);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
+        User updatedWeatherListUser = userDao.getByUsernameAndPassword(user.getUsername(), user.getPassword()).get();
+        request.getSession().setAttribute("user", updatedWeatherListUser);
         request.setAttribute("weather", weather);
         RequestDispatcher dispatcher = request.getRequestDispatcher("forecast.jsp");
         dispatcher.forward(request, response);

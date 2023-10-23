@@ -3,15 +3,13 @@ package entity;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalTime;
 
 /**
  * DTO отвечающий за прогноз погоды за определенный промежуток дней (1-16 исходя из возможностей <a href="https://open-meteo.com/">API</a>)
  */
 public class Forecast {
 
-    private int id;
+    private int weatherId;
 
     /**
      * Время в формате ISO 8601 с точностью до часа
@@ -38,8 +36,8 @@ public class Forecast {
     public Forecast() {
     }
 
-    public Forecast(int id, Time time, Date date, Double temperature, Integer humidity, Integer precipitationProbability) {
-        this.id = id;
+    public Forecast(int weatherId, Time time, Date date, Double temperature, Integer humidity, Integer precipitationProbability) {
+        this.weatherId = weatherId;
         this.time = time;
         this.date = date;
         this.temperature = temperature;
@@ -47,12 +45,12 @@ public class Forecast {
         this.precipitationProbability = precipitationProbability;
     }
 
-    public int getId() {
-        return id;
+    public int getWeatherId() {
+        return weatherId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setWeatherId(int weatherId) {
+        this.weatherId = weatherId;
     }
 
     public Time getTime() {
@@ -98,7 +96,7 @@ public class Forecast {
     @Override
     public String toString() {
         return "Forecast{" +
-               "id=" + id +
+               "id=" + weatherId +
                ", time=" + time +
                ", temperature=" + temperature +
                ", humidity=" + humidity +
